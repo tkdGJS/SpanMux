@@ -1,1 +1,0 @@
-exp_script/run_vendor_v8_burstgpt_mixed_125k.sh

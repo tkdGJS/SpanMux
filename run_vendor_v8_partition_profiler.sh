@@ -1,1 +1,0 @@
-exp_script/run_vendor_v8_partition_profiler.sh

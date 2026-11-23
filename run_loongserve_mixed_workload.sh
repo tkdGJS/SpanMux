@@ -1,1 +1,0 @@
-exp_script/run_loongserve_mixed_workload.sh
