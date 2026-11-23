@@ -10,96 +10,28 @@ KV 회수 및 Context Ring을 함께 사용합니다.
 P/D+SRPT(real19), SpanMux(real22)의 보관 결과입니다. 이들도 같은
 trace를 사용했지만 실행 당시의 소스 스냅샷과 바이너리는 달랐습니다.
 
-## 1. 서버와 빌드 준비
-
-Linux에서 CUDA와 호환되는 NVIDIA 드라이버, CUDA Toolkit(`nvcc`),
-C++ 컴파일러, Python 가상 환경, Bash, Git, CMake와 Ninja가 필요합니다.
-논문의 GPU는 Tesla T4(40 SM)입니다. GreenContext가 지원되는 드라이버를
-사용하세요. 빌드 전에 `nvidia-smi`와 `nvcc --version`으로 환경을 확인합니다.
+## 1. 서버 준비
 
 ```bash
-python3 -m venv .venv
-source .venv/bin/activate
-
-# NVIDIA 환경과 호환되는 CUDA PyTorch 2.9.1이 설치되는지 확인하세요.
 python -m pip install -r src/vllm-0.14-src/requirements/cuda.txt \
   -r src/vllm-0.14-src/requirements/build.txt
-python -m pip install aiohttp
-python -c 'import torch; print(torch.__version__, torch.version.cuda, torch.cuda.is_available())'
 
 (
   cd src/vllm-0.14-src
   CUDA_HOME=/usr/local/cuda-12.8 MAX_JOBS=8 VLLM_VERSION_OVERRIDE=0.14.0 \
     python -m pip install --no-build-isolation --no-deps -e .
 )
+
+cp src/vllm-0.14-src/vllm/*.so spanmux/vllm/
+cp src/vllm-0.14-src/vllm/vllm_flash_attn/*.so spanmux/vllm/vllm_flash_attn/
 ```
 
-`CUDA_HOME`은 서버에 설치한 Toolkit 경로로 바꿉니다. 기존에 동작한
-가상 환경이 있다면 `thesis.env`의 `VENV_DIR`로 지정할 수 있습니다.
-위 editable 설치본은 Baseline이 사용하는 vLLM과 수정된 CUDA 연산을
-제공합니다. FlashAttention 소스는 CMake가 지정된 upstream 커밋에서
-가져옵니다. 오프라인 빌드에서는 같은 커밋의 로컬 소스를 준비하고
-`VLLM_FLASH_ATTN_SRC_DIR`로 경로를 지정하세요.
-
-이어서 **같은 빌드에서 생성된 확장 모듈**을 SpanMux 패키지에 배치합니다.
-
-```bash
-find src/vllm-0.14-src/vllm -type f -name '*.so' -printf '%P\0' |
-  rsync -a --from0 --files-from=- src/vllm-0.14-src/vllm/ spanmux/vllm/
-
-VLLM_VENDOR_DIR="$PWD/spanmux" VLLM_PYTHON_EXECUTABLE="$PWD/.venv/bin/python" \
-  bash tools/deploy_vendor_v8_direct_ops.sh
-
-VLLM_VENDOR_DIR="$PWD/spanmux" \
-  bash tools/green_context_smoke/build_vendor_v8_bridge.sh
-```
-
-`_C_cache_ops` 연산 검증에 실패하면 실험 전에 빌드와 배포 경로를
-확인하세요. 모델 계정에 `meta-llama/Llama-3.2-1B-Instruct` 사용 권한이
-있어야 합니다. 모델을 로컬에 준비했다면 설정 파일의 `MODEL_NAME`에 모델
-디렉터리를 지정할 수 있습니다.
-
-## 2. LoongServe trace 준비
-
-기존 논문 trace가 있으면 `LOONGSERVE_TRACE_JSONL`에 그 파일을 지정하세요.
-보관 trace의 SHA-256은
-`2a0927f47d3d9e86547bf61f020d53236c04fdfb7f1e7064304e35663b7004ec`
-입니다. 논문에서는 이 파일의 **처음 100개 요청을 파일 순서와 원래 도착
-간격 그대로** 재생했습니다.
-
-기존 trace가 없다면 ShareGPT, L-Eval, LV-Eval을 준비하고 토큰화하여
-trace를 생성합니다. 아래 명령은 레포 루트에서 실행합니다.
-
-```bash
-prep_dir=exp_script
-if [ ! -f "$prep_dir/prepare_loongserve_raw_datasets.sh" ]; then prep_dir=.; fi
-LOONGSERVE_REPO_ROOT="$PWD" bash "$prep_dir/prepare_loongserve_raw_datasets.sh"
-
-.venv/bin/python "$prep_dir/prepare_loongserve_mixed_workload.py" \
-  --sharegpt-path data/ShareGPT_V3_unfiltered_cleaned_split.json \
-  --leval-path data/raw/loongserve/LEval/LEval-data \
-  --lveval-path data/raw/loongserve/LVEval \
-  --output-path data/loongserve_mixed_65k.jsonl \
-  --tokenizer meta-llama/Llama-3.2-1B-Instruct \
-  --tokenizer-workers 8 --tokenizer-batch-size 32 \
-  --requests-per-dataset 1452 --request-rate 0.5 --seed 0 \
-  --max-total-tokens 65536 --length-cap-policy filter_then_sample \
-  --insufficient-policy error
-
-sha256sum data/loongserve_mixed_65k.jsonl
-```
-
-총 길이 65,536을 넘는 요청을 제외한 뒤 데이터셋마다 1,452개를 뽑습니다.
-출력 목표 길이도 trace에서 가져옵니다. 데이터나 tokenizer 버전에 따라
-trace가 달라질 수 있으므로, 해시가 다르면 새 trace로 기록하세요.
-`profiling/slo/request_slo_policy.json`에는 요청 길이별 기존 SLO 기준이
-있습니다. 이는 workload 입력과 별개입니다.
-
-## 3. 설정 파일로 실행
+## 2. 설정 파일로 실행
 
 [`exp_script/thesis.env`](exp_script/thesis.env)에 공통 실험 조건을
 모았습니다. 서버별 설정이 필요하면 복사해서 경로, 실험 이름 및 선택한
-비교군을 수정하세요. 설정은 Bash가 읽는 로컬 파일입니다.
+비교군을 수정하세요. `LOONGSERVE_TRACE_JSONL`에는 기존 trace 파일 경로를
+지정합니다.
 
 ```bash
 cp exp_script/thesis.env exp_script/thesis.local.env
@@ -145,7 +77,7 @@ bash exp_script/run_thesis.sh --config exp_script/thesis.local.env
 | `WARMUP_COUNT=1`, `WARMUP_OUTPUT_TOKENS=8` | 측정 전에 워밍업 요청 1건, 출력 8토큰. 본 실험의 요청 집계에서 제외 |
 | `REQUEST_TIMEOUT_SEC=28800`, `SERVER_READY_TIMEOUT_SEC=900` | 요청의 처리 제한과 서버 시작 제한을 각각 지정 |
 
-## 4. 모니터링과 결과 확인
+## 3. 모니터링과 결과 확인
 
 | 옵션 | 측정 내용 |
 |---|---|
