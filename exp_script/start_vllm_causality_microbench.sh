@@ -1,7 +1,10 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+if [[ "${SCRIPT_DIR##*/}" == exp_script ]]; then
+  SCRIPT_DIR="$(dirname "${SCRIPT_DIR}")"
+fi
 
 OPTIONS=$(getopt -o m:p:h --long model:,port:,help -- "$@") || exit 1
 eval set -- "$OPTIONS"

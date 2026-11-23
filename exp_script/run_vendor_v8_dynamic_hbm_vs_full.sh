@@ -32,7 +32,11 @@ set -uo pipefail
 #   C. interleave S1,L1,S2,L2,S3,L3,S4,S5 at a fixed interval.
 #   LOONGSERVE. replay one immutable LoongServe Mixed JSONL trace open-loop.
 
-ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+EXPERIMENT_SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ROOT_DIR="${EXPERIMENT_SCRIPT_DIR}"
+if [[ "${EXPERIMENT_SCRIPT_DIR##*/}" == exp_script ]]; then
+  ROOT_DIR="$(dirname "${EXPERIMENT_SCRIPT_DIR}")"
+fi
 
 # Diagnostic ablation: Native width2 versus one request in each P/D batch.
 ISOLATION_BATCH2_PD11_COMPARISON="${ISOLATION_BATCH2_PD11_COMPARISON:-0}"
@@ -856,7 +860,7 @@ for variant in "${benchmark_variants[@]}"; do
     REQUEST_SLO_POLICY="${REQUEST_SLO_POLICY:-${ROOT_DIR}/vendor_v8_each_partition_profile_v2_results/slo/request_slo_policy.json}" \
     PREFILL_SERVICE_PROFILE="${PREFILL_SERVICE_PROFILE:-${ROOT_DIR}/vendor_v8_each_partition_profile_v2_results/runtime_profiles/prefill_service_profile.json}" \
     TBT_OVERLAP_PROFILE="${TBT_OVERLAP_PROFILE:-${ROOT_DIR}/vendor_v8_each_partition_profile_v2_results/runtime_profiles/tbt_overlap_profile.json}" \
-    "${ROOT_DIR}/run_vendor_v8_short_validation.sh" \
+    "${EXPERIMENT_SCRIPT_DIR}/run_vendor_v8_short_validation.sh" \
       "${RUNNER_ARGS[@]}"; then
     echo "[CASE] completed variant=${variant}"
   else

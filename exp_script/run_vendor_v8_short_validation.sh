@@ -6,7 +6,11 @@ set -euo pipefail
 #   Long2 -> two short injections -> Long2 completion
 #   Long3 -> two short injections -> Long3 completion
 
-ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+EXPERIMENT_SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ROOT_DIR="${EXPERIMENT_SCRIPT_DIR}"
+if [[ "${EXPERIMENT_SCRIPT_DIR##*/}" == exp_script ]]; then
+  ROOT_DIR="$(dirname "${EXPERIMENT_SCRIPT_DIR}")"
+fi
 
 EXPERIMENT_NAME="${EXPERIMENT_NAME:-vendor_v8_short_3long_6short}"
 RESULT_DIR="${ROOT_DIR}/${EXPERIMENT_NAME}_results"
@@ -1327,15 +1331,15 @@ if [[ -e "${RESULT_DIR}" || -e "${LOG_DIR}" || -e "${ARTIFACT_DIR}" ]]; then
   exit 1
 fi
 
-FIXED_WORKLOAD_MEASURER="${ROOT_DIR}/measure_vendor_v8_short_validation.py"
-LOONGSERVE_MEASURER="${ROOT_DIR}/measure_loongserve_mixed_workload.py"
+FIXED_WORKLOAD_MEASURER="${EXPERIMENT_SCRIPT_DIR}/measure_vendor_v8_short_validation.py"
+LOONGSERVE_MEASURER="${EXPERIMENT_SCRIPT_DIR}/measure_loongserve_mixed_workload.py"
 if [[ "${WORKLOAD}" == "LOONGSERVE" ]]; then
   MEASURER="${LOONGSERVE_MEASURER}"
 else
   MEASURER="${FIXED_WORKLOAD_MEASURER}"
 fi
 DATASET_PREPARER="${ROOT_DIR}/prepare_mixed_context_sharegpt.py"
-SERVER_STARTER="${ROOT_DIR}/start_vllm_causality_microbench.sh"
+SERVER_STARTER="${EXPERIMENT_SCRIPT_DIR}/start_vllm_causality_microbench.sh"
 POLICY_HELPER="${ROOT_DIR}/tools/pd_eval_policy_env.sh"
 for path in \
   "${REQUEST_SLO_POLICY}" \
@@ -1687,7 +1691,7 @@ elif [[ -f "${LOONGSERVE_TRACE_JSONL}.manifest.json" ]]; then
   cp -a "${LOONGSERVE_TRACE_JSONL}.manifest.json" \
     "${RESULT_DIR}/experiment_snapshot/loongserve_trace.manifest.json"
 fi
-PAIR_WRAPPER="${ROOT_DIR}/run_vendor_v8_dynamic_hbm_vs_full.sh"
+PAIR_WRAPPER="${EXPERIMENT_SCRIPT_DIR}/run_vendor_v8_dynamic_hbm_vs_full.sh"
 if [[ -f "${PAIR_WRAPPER}" ]]; then
   cp -a "${PAIR_WRAPPER}" "${RESULT_DIR}/experiment_snapshot/scripts/"
 fi
