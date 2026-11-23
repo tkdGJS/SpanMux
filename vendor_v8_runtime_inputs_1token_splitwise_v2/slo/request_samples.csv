@@ -1,0 +1,13 @@
+context_tokens,request_id,repeat_index,provenance,output_tokens,ttft_ms,one_token_tbt_mean_ms,one_token_tbt_p50_ms,one_token_tbt_p90_ms,one_token_tbt_p99_ms,e2e_ms
+10000,native_40sm_tbt_sm_scaling_10k_exact_v1_ctx10000_measurement-foreground-sharegpt-1-0,1,legacy_archive_bos_reconstruction,4096,9554.9697,22.637711,22.6531,24.23172,24.79746,102263.0333
+10000,native_40sm_tbt_sm_scaling_10k_exact_v1_ctx10000_measurement-foreground-sharegpt-2-0,2,legacy_archive_bos_reconstruction,4096,9596.919,22.823772,22.8456,24.3629,24.950274,103067.0333
+10000,native_40sm_tbt_sm_scaling_10k_exact_v1_ctx10000_measurement-foreground-sharegpt-3-0,3,legacy_archive_bos_reconstruction,4096,9622.7778,22.928108,22.9178,24.53328,25.11731,103520.3638
+25000,native_40sm_tbt_sm_scaling_25k_exact_v1_ctx25000_measurement-foreground-sharegpt-1-0,1,legacy_archive_bos_reconstruction,4096,55547.7309,35.929196,35.9382,37.48554,38.105112,202684.5383
+25000,native_40sm_tbt_sm_scaling_25k_exact_v1_ctx25000_measurement-foreground-sharegpt-2-0,2,legacy_archive_bos_reconstruction,4096,55773.9727,36.014035,35.9996,37.48366,38.134264,203258.9098
+25000,native_40sm_tbt_sm_scaling_25k_exact_v1_ctx25000_measurement-foreground-sharegpt-3-0,3,legacy_archive_bos_reconstruction,4096,55812.5518,36.007166,35.9818,37.49656,38.145876,203267.762
+50000,native_40sm_tbt_sm_scaling_50k_exact_v1_ctx50000_measurement-foreground-sharegpt-1-0,1,legacy_archive_bos_reconstruction,4096,224097.0021,58.436134,58.3837,60.10662,61.042478,463400.2579
+50000,native_40sm_tbt_sm_scaling_50k_exact_v1_ctx50000_measurement-foreground-sharegpt-2-0,2,legacy_archive_bos_reconstruction,4096,225306.8601,58.557843,58.5066,60.1797,61.185892,465107.9969
+50000,native_40sm_tbt_sm_scaling_50k_exact_v1_ctx50000_measurement-foreground-sharegpt-3-0,3,legacy_archive_bos_reconstruction,4096,224945.132,58.653546,58.5813,60.37922,61.306106,465138.4681
+100000,native_40sm_tbt_sm_scaling_100k_exact_v1_ctx100000_measurement-foreground-sharegpt-1-0,1,legacy_archive_bos_reconstruction,4096,884331.0278,100.341785,100.4129,101.7103,102.740814,1295238.0728
+100000,native_40sm_tbt_sm_scaling_100k_exact_v1_ctx100000_measurement-foreground-sharegpt-2-0,2,legacy_archive_bos_reconstruction,4096,883266.7267,100.279824,100.4086,101.64154,102.683018,1293920.0798
+100000,native_40sm_tbt_sm_scaling_100k_exact_v1_ctx100000_measurement-foreground-sharegpt-3-0,3,legacy_archive_bos_reconstruction,4096,881239.4504,100.344706,100.458,101.74644,102.8047,1292157.9956

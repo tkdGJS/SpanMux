@@ -1,0 +1,5 @@
+context_tokens,profiling_p50_ttft_ms,ttft_slo_factor,ttft_prefill_deadline_ms,profiling_p50_one_token_tbt_ms,tbt_slo_factor,tbt_slo_ms,calibration_provenance
+10000,9596.919,2.0,19193.838,22.8093,1.25,28.511625,legacy_archive_bos_reconstruction
+25000,55773.9727,2.0,111547.9454,35.9703,1.25,44.962875,legacy_archive_bos_reconstruction
+50000,224945.132,2.0,449890.264,58.4886,1.25,73.11075,legacy_archive_bos_reconstruction
+100000,883266.7267,2.0,1766533.4534,100.4235,1.25,125.529375,legacy_archive_bos_reconstruction

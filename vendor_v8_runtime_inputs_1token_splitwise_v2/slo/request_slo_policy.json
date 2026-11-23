@@ -1,0 +1,122 @@
+{
+  "schema_version": 1,
+  "created_at_utc": "2026-08-05T19:34:45.806045+00:00",
+  "reference": {
+    "hardware": "Tesla T4",
+    "total_sms": 40,
+    "concurrency": 1,
+    "policy": "native_no_contention"
+  },
+  "required_context_tokens": [
+    10000,
+    25000,
+    50000,
+    100000
+  ],
+  "calibration_mode": "measured_bucket_lookup",
+  "calibration_provenance": {
+    "measurement_sources": [
+      "legacy_archive_bos_reconstruction"
+    ],
+    "direct_choice_token_ids": false,
+    "note": "legacy_archive_bos_reconstruction is a validated historical archive reconstruction, not a direct exact-ID calibration"
+  },
+  "slo_multipliers": {
+    "method": "splitwise_quantile_matched_p50_slowdown",
+    "ttft": 2.0,
+    "tbt": 1.25
+  },
+  "slo_contract": {
+    "lookup": "smallest max_context_tokens covering request; requests above the largest measured bucket are rejected",
+    "partition_invariant": true,
+    "ttft_definition": "native 40-SM P50 TTFT * 2",
+    "tbt_definition": "native 40-SM pooled P50 one-output-token TBT * 1.25",
+    "tbt_measurement_source": "choice.token_ids",
+    "tbt_gap_field": "estimated_per_token_gap_ms",
+    "tbt_unit": "ms_per_output_token",
+    "tbt_requires_return_token_ids": true,
+    "tbt_computation": "At runtime, divide each streamed chunk inter-arrival gap by the number of new choice.token_ids; exclude the first token as TTFT.",
+    "ttft_measurement_source": "first streamed chunk with non-empty choice.token_ids",
+    "ttft_unit": "ms_from_submit_to_first_output_token_chunk"
+  },
+  "prefill_fallback_ms_per_token": 8.83266727,
+  "buckets": [
+    {
+      "max_context_tokens": 10000,
+      "ttft_prefill_deadline_ms": 19193.838,
+      "tbt_slo_ms": 28.511625
+    },
+    {
+      "max_context_tokens": 25000,
+      "ttft_prefill_deadline_ms": 111547.9454,
+      "tbt_slo_ms": 44.962875
+    },
+    {
+      "max_context_tokens": 50000,
+      "ttft_prefill_deadline_ms": 449890.264,
+      "tbt_slo_ms": 73.11075
+    },
+    {
+      "max_context_tokens": 100000,
+      "ttft_prefill_deadline_ms": 1766533.4534,
+      "tbt_slo_ms": 125.529375
+    }
+  ],
+  "limitations": [
+    "P50 policy thresholds are descriptive Splitwise-style SLOs, not hard real-time guarantees.",
+    "TTFT calibration has three measured requests per context.",
+    "Legacy BOS reconstruction calibration must not be reported as direct choice.token_ids measurement.",
+    "P/D partition feasibility and overlap cost are measured separately."
+  ],
+  "source_baselines": [
+    {
+      "results_dir": "/home/yuhwa2323/zoneatten_gpu/native_40sm_tbt_sm_scaling_10k_exact_v1_results",
+      "case_id": "native_40sm_tbt_sm_scaling_10k_exact_v1",
+      "contexts": [
+        10000
+      ],
+      "provenance": "legacy_archive_bos_reconstruction",
+      "requested_output_tokens": 4096
+    },
+    {
+      "results_dir": "/home/yuhwa2323/zoneatten_gpu/native_40sm_tbt_sm_scaling_25k_exact_v1_results",
+      "case_id": "native_40sm_tbt_sm_scaling_25k_exact_v1",
+      "contexts": [
+        25000
+      ],
+      "provenance": "legacy_archive_bos_reconstruction",
+      "requested_output_tokens": 4096
+    },
+    {
+      "results_dir": "/home/yuhwa2323/zoneatten_gpu/native_40sm_tbt_sm_scaling_50k_exact_v1_results",
+      "case_id": "native_40sm_tbt_sm_scaling_50k_exact_v1",
+      "contexts": [
+        50000
+      ],
+      "provenance": "legacy_archive_bos_reconstruction",
+      "requested_output_tokens": 4096
+    },
+    {
+      "results_dir": "/home/yuhwa2323/zoneatten_gpu/native_40sm_tbt_sm_scaling_100k_exact_v1_results",
+      "case_id": "native_40sm_tbt_sm_scaling_100k_exact_v1",
+      "contexts": [
+        100000
+      ],
+      "provenance": "legacy_archive_bos_reconstruction",
+      "requested_output_tokens": 4096
+    }
+  ],
+  "source_results_dirs": [
+    "/home/yuhwa2323/zoneatten_gpu/native_40sm_tbt_sm_scaling_10k_exact_v1_results",
+    "/home/yuhwa2323/zoneatten_gpu/native_40sm_tbt_sm_scaling_25k_exact_v1_results",
+    "/home/yuhwa2323/zoneatten_gpu/native_40sm_tbt_sm_scaling_50k_exact_v1_results",
+    "/home/yuhwa2323/zoneatten_gpu/native_40sm_tbt_sm_scaling_100k_exact_v1_results"
+  ],
+  "source_case_ids": [
+    "native_40sm_tbt_sm_scaling_10k_exact_v1",
+    "native_40sm_tbt_sm_scaling_25k_exact_v1",
+    "native_40sm_tbt_sm_scaling_50k_exact_v1",
+    "native_40sm_tbt_sm_scaling_100k_exact_v1"
+  ],
+  "model": "meta-llama/Llama-3.2-1B-Instruct"
+}

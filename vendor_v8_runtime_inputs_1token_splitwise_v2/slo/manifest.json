@@ -1,0 +1,78 @@
+{
+  "created_at_utc": "2026-08-05T19:34:45.806263+00:00",
+  "metric_contract": {
+    "ttft": "submit to first non-empty output-token fragment",
+    "tbt": "pooled individual generated-token gaps; first token excluded",
+    "e2e": "submit through streamed completion and [DONE]",
+    "quantiles": [
+      "P50",
+      "P90",
+      "P99"
+    ],
+    "splitwise_factors": {
+      "50": {
+        "ttft": 2.0,
+        "tbt": 1.25,
+        "e2e": 1.25
+      },
+      "90": {
+        "ttft": 3.0,
+        "tbt": 1.5,
+        "e2e": 1.5
+      },
+      "99": {
+        "ttft": 6.0,
+        "tbt": 5.0,
+        "e2e": 5.0
+      }
+    }
+  },
+  "sources": [
+    {
+      "context_tokens": 10000,
+      "results_dir": "/home/yuhwa2323/zoneatten_gpu/native_40sm_tbt_sm_scaling_10k_exact_v1_results",
+      "case_id": "native_40sm_tbt_sm_scaling_10k_exact_v1",
+      "provenance": "legacy_archive_bos_reconstruction",
+      "measurement_request_count": 3,
+      "one_token_tbt_gap_count": 12285,
+      "requested_output_tokens": 4096
+    },
+    {
+      "context_tokens": 25000,
+      "results_dir": "/home/yuhwa2323/zoneatten_gpu/native_40sm_tbt_sm_scaling_25k_exact_v1_results",
+      "case_id": "native_40sm_tbt_sm_scaling_25k_exact_v1",
+      "provenance": "legacy_archive_bos_reconstruction",
+      "measurement_request_count": 3,
+      "one_token_tbt_gap_count": 12285,
+      "requested_output_tokens": 4096
+    },
+    {
+      "context_tokens": 50000,
+      "results_dir": "/home/yuhwa2323/zoneatten_gpu/native_40sm_tbt_sm_scaling_50k_exact_v1_results",
+      "case_id": "native_40sm_tbt_sm_scaling_50k_exact_v1",
+      "provenance": "legacy_archive_bos_reconstruction",
+      "measurement_request_count": 3,
+      "one_token_tbt_gap_count": 12285,
+      "requested_output_tokens": 4096
+    },
+    {
+      "context_tokens": 100000,
+      "results_dir": "/home/yuhwa2323/zoneatten_gpu/native_40sm_tbt_sm_scaling_100k_exact_v1_results",
+      "case_id": "native_40sm_tbt_sm_scaling_100k_exact_v1",
+      "provenance": "legacy_archive_bos_reconstruction",
+      "measurement_request_count": 3,
+      "one_token_tbt_gap_count": 12285,
+      "requested_output_tokens": 4096
+    }
+  ],
+  "limits": [
+    "TTFT and E2E quantiles have only three measured requests per context.",
+    "Legacy BOS reconstruction is not a direct choice.token_ids measurement."
+  ],
+  "runtime_policy": {
+    "path": "request_slo_policy.json",
+    "quantile": "P50",
+    "ttft_factor": 2.0,
+    "tbt_factor": 1.25
+  }
+}
