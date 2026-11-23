@@ -1,1 +1,0 @@
-exp_script/prepare_loongserve_mixed_workload.py

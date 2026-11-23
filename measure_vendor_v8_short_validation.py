@@ -1,1 +1,0 @@
-exp_script/measure_vendor_v8_short_validation.py

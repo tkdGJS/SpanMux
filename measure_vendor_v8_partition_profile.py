@@ -1,1 +1,0 @@
-exp_script/measure_vendor_v8_partition_profile.py

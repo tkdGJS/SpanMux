@@ -6,7 +6,7 @@ set -euo pipefail
 #   Long2 -> two short injections -> Long2 completion
 #   Long3 -> two short injections -> Long3 completion
 
-ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
 EXPERIMENT_NAME="${EXPERIMENT_NAME:-vendor_v8_short_3long_6short}"
 RESULT_DIR="${ROOT_DIR}/${EXPERIMENT_NAME}_results"

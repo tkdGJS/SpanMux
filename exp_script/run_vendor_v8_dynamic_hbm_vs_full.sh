@@ -32,7 +32,7 @@ set -uo pipefail
 #   C. interleave S1,L1,S2,L2,S3,L3,S4,S5 at a fixed interval.
 #   LOONGSERVE. replay one immutable LoongServe Mixed JSONL trace open-loop.
 
-ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
 # Diagnostic ablation: Native width2 versus one request in each P/D batch.
 ISOLATION_BATCH2_PD11_COMPARISON="${ISOLATION_BATCH2_PD11_COMPARISON:-0}"

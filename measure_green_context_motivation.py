@@ -1,1 +1,0 @@
-exp_script/measure_green_context_motivation.py
